@@ -60,10 +60,10 @@ public class HomeActivity extends AppCompatActivity {
     public void onPost() {
         final String description = etDescription.getText().toString();
         final ParseUser user = ParseUser.getCurrentUser();
-        final ParseFile parseFile = new ParseFile(photoFile);
 
         // ensure that we cannot post without photoFile and description
-        if (photoFile.exists() && !description.isEmpty()) {
+        if (photoFile!=null && !description.isEmpty()) {
+            final ParseFile parseFile = new ParseFile(photoFile);
             createPost(description, parseFile, user);
         } else {
             Toast.makeText(this, "No picture or description to upload", Toast.LENGTH_SHORT).show();
