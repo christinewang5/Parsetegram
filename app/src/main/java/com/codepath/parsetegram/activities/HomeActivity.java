@@ -159,6 +159,8 @@ public class HomeActivity extends AppCompatActivity {
         return file;
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
@@ -176,7 +178,11 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
+    @OnClick(R.id.btnTimeline)
+    public void onTimeline() {
+        Intent intent = new Intent(HomeActivity.this, TimelineActivity.class);
+        startActivity(intent);
+    }
 }
 
 /*
@@ -194,3 +200,4 @@ Intent MediaStore.Action_image_capture);
     update ui
     submit, building parse object, saving remotely in parse
 */
+

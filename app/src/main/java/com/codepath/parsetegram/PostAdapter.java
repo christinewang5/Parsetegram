@@ -1,22 +1,33 @@
 package com.codepath.parsetegram;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.codepath.parsetegram.model.Post;
-import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     List<Post> posts;
     Context context;
+
+    public PostAdapter(List<Post> posts) {
+        this.posts = posts;
+    }
 
     @NonNull
     @Override
@@ -28,23 +39,54 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PostAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int position) {
+        Post post = posts.get(position);
+        Log.d("PostAdapter", post.getUser().getUsername()+" posted.");
+
+        viewHolder.tvUsername.setText(post.getUser().getUsername());
+        post.getImage().getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] data, ParseException e) {
+                if (e == null) {
+                    // Decode the Byte[] into
+                    // Bitmap
+                    Bitmap bmp = BitmapFactory
+                            .decodeByteArray(
+                                    data, 0,
+                                    data.length);
+                    Log.d("PostAdapter", "Byte count for my pic " + bmp.getByteCount());
+                    // set the Bitmap into the ivImage
+                    viewHolder.ivImage.setImageBitmap(bmp);
+
+                }
+                else {
+                    Log.d("PostAdapter","Problem load image the data.");
+                }
+            }
+        });
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return posts.size();
+    }
+
+    public void clear() {
+        posts.clear();
+        notifyDataSetChanged();
     }
 
     // create ViewHolder class
     public class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
+        @BindView(R.id.tvUsername) TextView tvUsername;
+        @BindView(R.id.ivImage) ImageView ivImage;
+
+
         public ViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
-
-    // TODO - load all posts with infinite scrolling?
-
-
 }
