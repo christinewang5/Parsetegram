@@ -1,4 +1,4 @@
-package com.codepath.parsetegram.activity;
+package com.codepath.parsetegram.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
