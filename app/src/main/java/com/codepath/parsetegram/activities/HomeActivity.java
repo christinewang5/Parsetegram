@@ -7,7 +7,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +30,7 @@ public class HomeActivity extends AppCompatActivity implements
     @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
     @BindView(R.id.viewpager) ViewPager viewPager;
 
-    private FeedFragment feedFragment;
+    public FeedFragment feedFragment;
     private PostFragment postFragment;
     private ProfileFragment profileFragment;
     private PagerAdapter pagerAdapter;
@@ -80,25 +79,6 @@ public class HomeActivity extends AppCompatActivity implements
             }
         };
 
-        // set on item selected listener for bottom navigation view
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            default:
-                            case R.id.action_home:
-                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                fragmentTransaction.replace(R.id.fragment_feed, feedFragment).commit();
-                                return true;
-                                // TODO - bottom navigation view with fragments
-                            case R.id.action_new_post:
-                            case R.id.action_profile:
-
-                        }
-                        return true;
-                    }
-                });
         viewPager.setAdapter(pagerAdapter);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.action_home);

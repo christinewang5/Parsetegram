@@ -41,7 +41,6 @@ public class PostFragment extends Fragment {
     File photoFile;
     @BindView(R.id.etCaption) EditText etCaption;
     @BindView(R.id.ivPhoto) ImageView ivPhoto;
-
     private ProfileFragment.OnFragmentInteractionListener mListener;
 
     // Required empty public constructor
@@ -131,8 +130,10 @@ public class PostFragment extends Fragment {
                 Log.d("HomeActivity", "Done");
                 if (e == null) {
                     Log.d("HomeActivity", "Create post success");
+                    Toast.makeText(getContext(), "Posted!", Toast.LENGTH_LONG);
                 } else {
                     Log.e("HomeActivity", "Create post failed");
+                    Toast.makeText(getContext(), "Failed to post, try again.", Toast.LENGTH_LONG);
                     e.printStackTrace();
                 }
             }
@@ -141,10 +142,17 @@ public class PostFragment extends Fragment {
 
     @OnClick(R.id.btnPost)
     public void onPost() {
-        createPost(etCaption.getText().toString(), new ParseFile(photoFile), ParseUser.getCurrentUser());
-        // clear the current screens
-        ivPhoto.setImageResource(R.drawable.bg_splash);
-        etCaption.setText("");
+        String caption = etCaption.getText().toString();
+        if (!caption.isEmpty() && photoFile != null){
+            ParseFile photoParseFile = new ParseFile(photoFile);
+            createPost(caption, photoParseFile, ParseUser.getCurrentUser());
+            // clear the current screens
+            ivPhoto.setImageResource(R.drawable.bg_splash);
+            etCaption.setText("");
+        }
+        else {
+            Toast.makeText(getContext(), "No photo or caption to post", Toast.LENGTH_LONG);
+        }
     }
 
 }

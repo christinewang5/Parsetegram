@@ -1,9 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/post"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.PostDetailActivity">
+    android:layout_height="wrap_content">
 
-</android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:paddingRight="5dp"
+        app:srcCompat="@drawable/bg_splash" />
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:text="@username"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/ivImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ivProfileImage"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        app:srcCompat="@drawable/bg_splash" />
+
+    <Button
+        android:id="@+id/btnLike"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvCaption"
+        android:background="@drawable/ic_like" />
+
+    <Button
+        android:id="@+id/btnComment"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvCaption"
+        android:layout_marginStart="64dp"
+        android:background="@drawable/ic_comment" />
+
+    <Button
+        android:id="@+id/btnDirect"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/btnComment"
+        android:layout_below="@+id/tvCaption"
+        android:layout_marginStart="123dp"
+        android:background="@drawable/direct" />
+
+    <TextView
+        android:id="@+id/tvCreatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/btnLike"
+        android:text="time"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="?android:attr/listDivider"
+        android:paddingTop="15dp" />
+
+    <TextView
+        android:id="@+id/tvCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ivImage"
+        android:text="caption" />
+
+</RelativeLayout>

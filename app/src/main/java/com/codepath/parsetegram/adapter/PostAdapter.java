@@ -1,6 +1,7 @@
 package com.codepath.parsetegram.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.parsetegram.R;
+import com.codepath.parsetegram.activities.PostDetailActivity;
 import com.codepath.parsetegram.model.Post;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -58,7 +60,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             .decodeByteArray(
                                     data, 0,
                                     data.length);
-                    Log.d("PostAdapter", "Byte count for my pic " + bmp.getByteCount());
                     // set the Bitmap into the ivImage
                     viewHolder.ivImage.setImageBitmap(bmp);
 
@@ -71,6 +72,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         viewHolder.tvCreatedAt.setText(post.getRelativeTimeAgo());
         viewHolder.tvCaption.setText(post.getDescription());
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -88,7 +91,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
     // create ViewHolder class
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
         @BindView(R.id.tvUsername) TextView tvUsername;
         @BindView(R.id.ivImage) ImageView ivImage;
@@ -98,6 +101,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Log.d("PostAdapter", "Clicked on post");
+            // gets item position
+            int position = getAdapterPosition();
+            // make sure the position is valid, i.e. actually exists in the view
+            if (position != RecyclerView.NO_POSITION) {
+                // get the movie at the position, this won't work if the class is static
+                Post post = posts.get(position);
+                // create intent for the new activity
+                Intent intent = new Intent(context, PostDetailActivity.class);
+                // serialize the movie using parceler, use its short name as a key
+                intent.putExtra(Post.class.getSimpleName(), post);
+                // show the activity
+                context.startActivity(intent);
+            }
         }
     }
 }

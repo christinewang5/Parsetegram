@@ -71,7 +71,6 @@ public class Post extends ParseObject{
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         return relativeDate;
     }
 }
