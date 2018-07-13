@@ -1,4 +1,4 @@
-package com.codepath.parsetegram;
+package com.codepath.parsetegram.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.parsetegram.R;
 import com.codepath.parsetegram.model.Post;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -43,6 +44,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         Post post = posts.get(position);
         Log.d("PostAdapter", post.getUser().getUsername()+" posted.");
 
+        // set post's text, image, created at
         viewHolder.tvUsername.setText(post.getUser().getUsername());
         post.getImage().getDataInBackground(new GetDataCallback() {
             @Override
@@ -64,7 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 }
             }
         });
-
+        viewHolder.tvCreatedAt.setText(post.getRelativeTimeAgo());
     }
 
     @Override
@@ -77,12 +79,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void setItems(List<Post> posts) {
+        int diff = posts.size() - this.posts.size();
+        this.posts = posts;
+        if (diff != 0) {
+            notifyItemRangeInserted(0, diff);
+        } else {
+            notifyDataSetChanged();
+        }
+    }
     // create ViewHolder class
     public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
         @BindView(R.id.tvUsername) TextView tvUsername;
         @BindView(R.id.ivImage) ImageView ivImage;
-
+        @BindView(R.id.tvCreatedAt) TextView tvCreatedAt;
 
         public ViewHolder(View itemView) {
             super(itemView);

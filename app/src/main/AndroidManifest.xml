@@ -31,7 +31,7 @@
                 android:resource="@xml/fileprovider" />
         </provider>
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,8 +40,8 @@
         </activity>
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.CreateAccountActivity" />
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.TimelineActivity"></activity>
+        <activity android:name=".activities.PostDetailActivity" />
+        <activity android:name=".activities.CreatePost"></activity>
     </application>
 
 </manifest>

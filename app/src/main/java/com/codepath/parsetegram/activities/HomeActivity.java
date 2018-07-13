@@ -1,50 +1,40 @@
 package com.codepath.parsetegram.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.codepath.parsetegram.R;
-import com.codepath.parsetegram.model.Post;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
+import com.codepath.parsetegram.fragments.FeedFragment;
+import com.codepath.parsetegram.fragments.PostFragment;
+import com.codepath.parsetegram.fragments.ProfileFragment;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
-import java.io.File;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class HomeActivity extends AppCompatActivity {
-    static String imagePath = "src/IMG_0007.jpg";
-    @BindView(R.id.etDescription) EditText etDescription;
-    @BindView(R.id.btnCreate) Button btnCreate;
-    @BindView(R.id.btnRefresh) Button btnRefresh;
-    @BindView(R.id.btnLogout) Button btnLogout;
-    @BindView(R.id.btnPost) Button btnPost;
-    @BindView(R.id.ivPreview) ImageView ivPreview;
+public class HomeActivity extends AppCompatActivity implements
+        BottomNavigationView.OnNavigationItemSelectedListener{
 
-    public final String APP_TAG = "Parstegram";
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    // TODO - photoFileName is "o"?
-    public String photoFileName = "photo.jpg";
-    File photoFile;
+    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
+    @BindView(R.id.viewpager) ViewPager viewPager;
+
+    private FeedFragment feedFragment;
+    private PostFragment postFragment;
+    private ProfileFragment profileFragment;
+    private PagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,150 +44,103 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.d("HomeActivity", "Current user is " + ParseUser.getCurrentUser());
 
-    }
+        // find and set toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.nav_logo_whiteout);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
-    @OnClick(R.id.btnPost)
-    public void onPost() {
-        final String description = etDescription.getText().toString();
-        final ParseUser user = ParseUser.getCurrentUser();
+        final FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // ensure that we cannot post without photoFile and description
-        if (photoFile!=null && !description.isEmpty()) {
-            final ParseFile parseFile = new ParseFile(photoFile);
-            createPost(description, parseFile, user);
-        } else {
-            Toast.makeText(this, "No picture or description to upload", Toast.LENGTH_SHORT).show();
+        if (feedFragment == null) {
+            feedFragment = FeedFragment.newInstance();
         }
-    }
+        if (postFragment == null) {
+            postFragment = postFragment.newInstance();
+        }
+        if (profileFragment == null) {
+            profileFragment = ProfileFragment.newInstance();
+        }
 
-    @OnClick(R.id.btnRefresh)
-    public void onRefresh() {
-        loadTopPosts();
-    }
-
-    @OnClick(R.id.btnLogout)
-    public void onLogout() {
-        ParseUser.logOut();
-        Log.d("HomeActivity", "Logout. Current user is " + ParseUser.getCurrentUser());
-        Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    private void createPost(String description, ParseFile imageFile, ParseUser user) {
-        final Post newPost = new Post();
-        newPost.setDescription(description);
-        newPost.setImage(imageFile);
-        newPost.setUser(user);
-        // TODO - stop user from constantly create same post
-        newPost.saveInBackground(new SaveCallback() {
+        pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
-            public void done(ParseException e) {
-                Log.d("HomeActivity", "Done");
-                if (e == null) {
-                    Log.d("HomeActivity", "Create post success");
-                } else {
-                    Log.e("HomeActivity", "Create post failed");
-                    e.printStackTrace();
+            public Fragment getItem(int i) {
+                switch (i) {
+                    default:
+                    case 0:
+                        return feedFragment;
+                    case 1:
+                        return postFragment;
+                    case 2:
+                        return profileFragment;
                 }
             }
-        });
-    }
 
-    private void loadTopPosts() {
-        final Post.Query postsQuery = new Post.Query();
-        postsQuery.getTop().withUser();
-        postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
-            public void done(List<Post> objects, ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < objects.size(); ++i) {
-                        Log.d("HomeActivity", "Post["+i+"] = "
-                                + objects.get(i).getDescription()
-                                + "\nusername = "+objects.get(i).getUser().getUsername());
+            public int getCount() {
+                return 3;
+            }
+        };
+
+        // set on item selected listener for bottom navigation view
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            default:
+                            // TODO - change bottom navigation
+                            case R.id.action_home:
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                fragmentTransaction.replace(R.id.fragment_feed, feedFragment).commit();
+                                return true;
+                            // TODO - bottom navigation view with fragments
+                            case R.id.action_new_post:
+                            case R.id.action_profile:
+
+                        }
+                        return true;
                     }
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+                });
+        viewPager.setAdapter(pagerAdapter);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.action_home);
     }
-
-    @OnClick(R.id.btnCreate)
-    public void onLaunchCamera(View view) {
-        Log.d("HomeActivity", "in onLaunchCamera");
-
-        // create intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        // create a File reference
-        photoFile = getPhotoFileUri(photoFileName);
-
-        // wrap File object into a content provider
-        Uri fileProvider = FileProvider.getUriForFile(HomeActivity.this, "com.codepath.fileprovider", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        // start intent when activity component is not null
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-    public File getPhotoFileUri(String fileName) {
-        Log.d("HomeActivity", "in getPhotoFileUri");
-
-        // get directory for photos
-        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
-
-        // create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(APP_TAG, "failed to create directory");
-        }
-
-        // return the file target for the photo based on filename
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-
-        return file;
-    }
-
-
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Log.d("HomeActivity", "in onActivityResult");
-
-            // camera photo already on disk!
-            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-
-            // TODO - resize bitmap
-
-            // load the taken image into a preview
-            ivPreview.setImageBitmap(takenImage);
-        } else {
-            Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_home, menu);
+        return true;
     }
 
-    @OnClick(R.id.btnTimeline)
-    public void onTimeline() {
-        Intent intent = new Intent(HomeActivity.this, TimelineActivity.class);
-        startActivity(intent);
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            default:
+            case R.id.action_home:
+                viewPager.setCurrentItem(0);
+                break;
+            case R.id.action_new_post:
+                viewPager.setCurrentItem(1);
+                break;
+            case R.id.action_profile:
+                viewPager.setCurrentItem(2);
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.logout) {
+            ParseUser.logOut();
+            Log.d("HomeActivity", "Logout. Current user is " + ParseUser.getCurrentUser());
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        return true;
     }
 }
-
-/*
-Intent MediaStore.Action_image_capture);
-    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-    fragment.startActivityForResult(intent, requestCode);
-    return path
-
-    // TODO - General idea of photo submitting
-    take photo create new intent
-    create temporary file
-    get absolute path
-    convert to uri so that intent can understand
-    output directory
-    update ui
-    submit, building parse object, saving remotely in parse
-*/
 
