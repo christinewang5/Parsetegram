@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient_divider"
     tools:context=".activities.CreateAccountActivity">
 
     <EditText
@@ -12,9 +13,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="194dp"
         android:ems="10"
         android:hint="Username"
-        android:inputType="textPersonName"/>
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/etPassword"
@@ -24,16 +26,19 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:layout_margin="2dp"/>
 
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/etPassword"
+        android:layout_centerHorizontal="true"
         android:ems="10"
         android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:layout_margin="2dp"/>
 
     <Button
         android:id="@+id/btnCreateAccount"
@@ -41,6 +46,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/etEmail"
         android:layout_centerHorizontal="true"
-        android:text="Create account"/>
+        android:background="@layout/my_button"
+        android:textColor="@color/white"
+        android:text="Create account"
+        android:layout_margin="5dp"/>
+
 
 </RelativeLayout>

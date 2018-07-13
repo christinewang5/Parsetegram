@@ -22,6 +22,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static java.util.Collections.reverse;
+
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     List<Post> posts;
     Context context;
@@ -67,6 +69,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
         viewHolder.tvCreatedAt.setText(post.getRelativeTimeAgo());
+        viewHolder.tvCaption.setText(post.getDescription());
     }
 
     @Override
@@ -80,13 +83,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public void setItems(List<Post> posts) {
-        int diff = posts.size() - this.posts.size();
+        reverse(posts);
         this.posts = posts;
-        if (diff != 0) {
-            notifyItemRangeInserted(0, diff);
-        } else {
-            notifyDataSetChanged();
-        }
+        notifyDataSetChanged();
     }
     // create ViewHolder class
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -94,6 +93,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         @BindView(R.id.tvUsername) TextView tvUsername;
         @BindView(R.id.ivImage) ImageView ivImage;
         @BindView(R.id.tvCreatedAt) TextView tvCreatedAt;
+        @BindView(R.id.tvCaption) TextView tvCaption;
 
         public ViewHolder(View itemView) {
             super(itemView);

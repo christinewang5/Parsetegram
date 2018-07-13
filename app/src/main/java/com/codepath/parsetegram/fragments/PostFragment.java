@@ -1,13 +1,34 @@
 package com.codepath.parsetegram.fragments;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.codepath.parsetegram.R;
+import com.codepath.parsetegram.model.Post;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.io.File;
+
+import butterknife.BindView;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,14 +39,14 @@ import com.codepath.parsetegram.R;
  * create an instance of this fragment.
  */
 public class PostFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public final String APP_TAG = "PostFragment";
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    // TODO - photoFileName is "o"?
+    public String photoFileName = "photo.jpg";
+    File photoFile;
+    @BindView(R.id.etDescription) EditText etDescription;
+    @BindView(R.id.ivPreview) ImageView ivPreview;
 
     private OnFragmentInteractionListener mListener;
 
@@ -50,10 +71,6 @@ public class PostFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -101,4 +118,77 @@ public class PostFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void createPost(String description, ParseFile imageFile, ParseUser user) {
+        final Post newPost = new Post();
+        newPost.setDescription(description);
+        newPost.setImage(imageFile);
+        newPost.setUser(user);
+        // TODO - stop user from constantly create same post
+        newPost.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.d("HomeActivity", "Done");
+                if (e == null) {
+                    Log.d("HomeActivity", "Create post success");
+                } else {
+                    Log.e("HomeActivity", "Create post failed");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    //@OnClick(R.id.fabTakePhoto)
+    public void onLaunchCamera(View view) {
+        Log.d("HomeActivity", "in onLaunchCamera");
+
+        // create intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // create a File reference
+        photoFile = getPhotoFileUri(photoFileName);
+
+        // wrap File object into a content provider
+        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        // start intent when activity component is not null
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    public File getPhotoFileUri(String fileName) {
+        Log.d("HomeActivity", "in getPhotoFileUri");
+
+        // get directory for photos
+        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+
+        // create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d(APP_TAG, "failed to create directory");
+        }
+
+        // return the file target for the photo based on filename
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+
+        return file;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Log.d("HomeActivity", "in onActivityResult");
+
+            // camera photo already on disk!
+            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+
+            // load the taken image into a preview
+            ivPreview.setImageBitmap(takenImage);
+        } else {
+            Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

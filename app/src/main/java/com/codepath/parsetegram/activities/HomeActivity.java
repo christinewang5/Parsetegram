@@ -48,8 +48,6 @@ public class HomeActivity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.nav_logo_whiteout);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -76,7 +74,6 @@ public class HomeActivity extends AppCompatActivity implements
                         return profileFragment;
                 }
             }
-
             @Override
             public int getCount() {
                 return 3;
@@ -90,12 +87,11 @@ public class HomeActivity extends AppCompatActivity implements
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             default:
-                            // TODO - change bottom navigation
                             case R.id.action_home:
                                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                                 fragmentTransaction.replace(R.id.fragment_feed, feedFragment).commit();
                                 return true;
-                            // TODO - bottom navigation view with fragments
+                                // TODO - bottom navigation view with fragments
                             case R.id.action_new_post:
                             case R.id.action_profile:
 

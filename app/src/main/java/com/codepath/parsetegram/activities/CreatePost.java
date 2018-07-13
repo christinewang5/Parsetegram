@@ -60,18 +60,6 @@ public class CreatePost extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.btnRefresh)
-    public void onRefresh() {
-        loadTopPosts();
-    }
-
-    @OnClick(R.id.btnLogout)
-    public void onLogout() {
-        ParseUser.logOut();
-        Log.d("HomeActivity", "Logout successful. Current user is " + ParseUser.getCurrentUser());
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
 
     private void createPost(String description, ParseFile imageFile, ParseUser user) {
         final Post newPost = new Post();

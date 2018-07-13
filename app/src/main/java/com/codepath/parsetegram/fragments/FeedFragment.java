@@ -35,8 +35,6 @@ public class FeedFragment extends Fragment {
     // required empty public constructor
     public FeedFragment() {}
 
-    List<Post> posts;
-
     // public interface FeedCallbacks { }
     // private FeedCallbacks listener;
     private PostAdapter postAdapter;
@@ -52,12 +50,9 @@ public class FeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
         ButterKnife.bind(this, view);
         // initialize all vars
-        ArrayList<Post> posts = new ArrayList<Post>();
         if (postAdapter == null) {
-            postAdapter = new PostAdapter(posts);
+            postAdapter = new PostAdapter(new ArrayList<Post>());
         }
-
-        posts = new ArrayList<Post>();
 
         // setup recycler view
         rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
