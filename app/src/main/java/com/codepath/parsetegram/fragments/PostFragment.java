@@ -27,17 +27,11 @@ import com.parse.SaveCallback;
 import java.io.File;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PostFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PostFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PostFragment extends Fragment {
 
     public final String APP_TAG = "PostFragment";
@@ -45,58 +39,28 @@ public class PostFragment extends Fragment {
     // TODO - photoFileName is "o"?
     public String photoFileName = "photo.jpg";
     File photoFile;
-    @BindView(R.id.etDescription) EditText etDescription;
-    @BindView(R.id.ivPreview) ImageView ivPreview;
+    @BindView(R.id.etCaption) EditText etCaption;
+    @BindView(R.id.ivPhoto) ImageView ivPhoto;
 
-    private OnFragmentInteractionListener mListener;
+    private ProfileFragment.OnFragmentInteractionListener mListener;
 
-    public PostFragment() {
-        // Required empty public constructor
-    }
+    // Required empty public constructor
+    public PostFragment() { }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment PostFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PostFragment newInstance() {
-        PostFragment fragment = new PostFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
+    public static PostFragment newInstance() { return new PostFragment(); }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_post, container, false);
+        View view = inflater.inflate(R.layout.fragment_post, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }*/
 
     @Override
     public void onDetach() {
@@ -104,42 +68,7 @@ public class PostFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-    private void createPost(String description, ParseFile imageFile, ParseUser user) {
-        final Post newPost = new Post();
-        newPost.setDescription(description);
-        newPost.setImage(imageFile);
-        newPost.setUser(user);
-        // TODO - stop user from constantly create same post
-        newPost.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                Log.d("HomeActivity", "Done");
-                if (e == null) {
-                    Log.d("HomeActivity", "Create post success");
-                } else {
-                    Log.e("HomeActivity", "Create post failed");
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    //@OnClick(R.id.fabTakePhoto)
+    @OnClick(R.id.fabTakePhoto)
     public void onLaunchCamera(View view) {
         Log.d("HomeActivity", "in onLaunchCamera");
 
@@ -185,10 +114,37 @@ public class PostFragment extends Fragment {
             Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
 
             // load the taken image into a preview
-            ivPreview.setImageBitmap(takenImage);
+            ivPhoto.setImageBitmap(takenImage);
         } else {
             Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void createPost(String description, ParseFile imageFile, ParseUser user) {
+        final Post newPost = new Post();
+        newPost.setDescription(description);
+        newPost.setImage(imageFile);
+        newPost.setUser(user);
+        newPost.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Log.d("HomeActivity", "Done");
+                if (e == null) {
+                    Log.d("HomeActivity", "Create post success");
+                } else {
+                    Log.e("HomeActivity", "Create post failed");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @OnClick(R.id.btnPost)
+    public void onPost() {
+        createPost(etCaption.getText().toString(), new ParseFile(photoFile), ParseUser.getCurrentUser());
+        // clear the current screens
+        ivPhoto.setImageResource(R.drawable.bg_splash);
+        etCaption.setText("");
     }
 
 }
