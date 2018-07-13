@@ -2,7 +2,6 @@ package com.codepath.parsetegram.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 
 import com.codepath.parsetegram.R;
 import com.codepath.parsetegram.model.Post;
+import com.codepath.parsetegram.utils.CameraUtils;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -41,7 +41,7 @@ public class PostFragment extends Fragment {
     File photoFile;
     @BindView(R.id.etCaption) EditText etCaption;
     @BindView(R.id.ivPhoto) ImageView ivPhoto;
-    private ProfileFragment.OnFragmentInteractionListener mListener;
+
 
     // Required empty public constructor
     public PostFragment() { }
@@ -60,12 +60,6 @@ public class PostFragment extends Fragment {
         return view;
     }
 
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     @OnClick(R.id.fabTakePhoto)
     public void onLaunchCamera(View view) {
@@ -109,11 +103,13 @@ public class PostFragment extends Fragment {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Log.d("HomeActivity", "in onActivityResult");
 
-            // camera photo already on disk!
-            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-
+            // camera photo already on disk! resize and rotate!
+            //Bitmap takenImage = BitmapFactory.decodeFile(rawPhotoFile.getAbsolutePath());
+            Bitmap rotatedImage = CameraUtils.rotateBitmapOrientation(photoFile.getAbsolutePath());
+            Bitmap resizedImage = CameraUtils.scaleToFitWidth(rotatedImage, (int) (CameraUtils.getDisplayWidth(getContext())*0.6));
+            CameraUtils.writeBitmapToFile(photoFile, resizedImage);
             // load the taken image into a preview
-            ivPhoto.setImageBitmap(takenImage);
+            ivPhoto.setImageBitmap(resizedImage);
         } else {
             Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }

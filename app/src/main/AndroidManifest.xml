@@ -41,7 +41,6 @@
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.CreateAccountActivity" />
         <activity android:name=".activities.PostDetailActivity" />
-        <activity android:name=".activities.CreatePost"></activity>
     </application>
 
 </manifest>

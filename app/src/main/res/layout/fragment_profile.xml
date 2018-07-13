@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/ivProfileImage"
             android:layout_toEndOf="@+id/ivProfileImage"
-            android:text="@username"
+            android:text=" @username"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         <android.support.v7.widget.GridLayout
