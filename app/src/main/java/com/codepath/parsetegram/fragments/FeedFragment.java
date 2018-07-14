@@ -68,6 +68,8 @@ public class FeedFragment extends Fragment {
             }
         });
 
+
+
         loadTop20Posts();
 
         return view;
@@ -94,6 +96,6 @@ public class FeedFragment extends Fragment {
                 }
             }
         });
-
     }
+
 }

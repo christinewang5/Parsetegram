@@ -18,6 +18,7 @@ import com.codepath.parsetegram.activities.PostDetailActivity;
 import com.codepath.parsetegram.model.Post;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 
 import java.util.List;
 
@@ -54,15 +55,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void done(byte[] data, ParseException e) {
                 if (e == null) {
-                    // Decode the Byte[] into
-                    // Bitmap
-                    Bitmap bmp = BitmapFactory
-                            .decodeByteArray(
+                    // decode the byte[] into Bitmap
+                    Bitmap bmp = BitmapFactory.decodeByteArray(
                                     data, 0,
                                     data.length);
                     // set the Bitmap into the ivImage
                     viewHolder.ivImage.setImageBitmap(bmp);
-
                 }
                 else {
                     Log.d("PostAdapter","Problem load image the data.");
@@ -71,6 +69,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         });
         viewHolder.tvCreatedAt.setText(post.getRelativeTimeAgo());
         viewHolder.tvCaption.setText(post.getDescription());
+
+        ParseFile parseProfileImage = post.getUser().getParseFile("profileImage");//.getUrl();
+        if (parseProfileImage != null) {
+            parseProfileImage.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] data, ParseException e) {
+                    if (e==null) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(
+                                data, 0, data.length);
+                        viewHolder.ivProfileImage.setImageBitmap(bmp);
+                    }
+                    else {
+                        Log.d("PostAdapter", "Problem load image the data");
+                    }
+                }
+            });
+        }
     }
 
 

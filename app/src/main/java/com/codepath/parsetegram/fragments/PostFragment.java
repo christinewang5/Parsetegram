@@ -106,7 +106,7 @@ public class PostFragment extends Fragment {
             // camera photo already on disk! resize and rotate!
             //Bitmap takenImage = BitmapFactory.decodeFile(rawPhotoFile.getAbsolutePath());
             Bitmap rotatedImage = CameraUtils.rotateBitmapOrientation(photoFile.getAbsolutePath());
-            Bitmap resizedImage = CameraUtils.scaleToFitWidth(rotatedImage, (int) (CameraUtils.getDisplayWidth(getContext())*0.6));
+            Bitmap resizedImage = CameraUtils.scaleToFitWidth(rotatedImage, (int) (CameraUtils.getDisplayWidth(getContext())*0.8));
             CameraUtils.writeBitmapToFile(photoFile, resizedImage);
             // load the taken image into a preview
             ivPhoto.setImageBitmap(resizedImage);
@@ -150,5 +150,6 @@ public class PostFragment extends Fragment {
             Toast.makeText(getContext(), "No photo or caption to post", Toast.LENGTH_LONG);
         }
     }
+
 
 }
